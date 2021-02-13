@@ -5,63 +5,67 @@
     <title>Color Game</title>
     <link rel="stylesheet" href="./index.css" />
   </head>
+
   <body onload="newGame()">
     <div id="header">
-      <h2>The Great</h2>
-      <h1 id="header-clue">rgb(xxx,xxx,xxx)</h1>
-      <h2>Guessing Game</h2>
+      <h1>Guess the color</h1>
+      <br>
+      <p>AVERAGE: <span id="avg"></span> </p>
+      <p>COUNT: <span id="cnt"></span> </p>
+      <p>ROUND: <span id="rnd"></span> </p>
+      <br>
+      <h2 id="header-clue">rgb(xxx,xxx,xxx)</h2>
+      <br>
+      <button class="button" type="button" onclick="reStart()"> RESTART </button>
     </div>
+    
     <div id="container">
+      <div class="tile" id="0"></div>
       <div class="tile" id="1"></div>
       <div class="tile" id="2"></div>
+      <div class="tile" id="3"></div>
+      <div class="tile" id="4"></div>
+      <div class="tile" id="5"></div>
     </div>
-
+    
     <script>
-      var t1 = document.getElementById("1");
-      var t2 = document.getElementById("2");
-      var x;
-      var correctColor;
+      var t = [];
+      for(var i = 0; i < 6; i++) { t[i] = document.getElementById(i.toString()); }
+      
+      var correctColor, cnt = 0, rnd = 0, avg = 0.0, tot = 0;
 
       function getRandomColor() {
-        var letters = "0123456789ABCDEF";
-        var color = "#";
-        for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
+        let letters = "0123456789ABCDEF"; let color = "#";
+
+        for (let k = 0; k < 6; k++) { color += letters[Math.floor(Math.random() * 16)]; }
         return color;
       }
 
       function newGame() {
-        t1.style.background = getRandomColor();
-        t2.style.background = getRandomColor();
+        for(let j = 0; j < 6; j++) { t[j].style.background = getRandomColor(); }
+        document.getElementById("avg").innerHTML = avg.toFixed(2);
+        rnd++; document.getElementById("rnd").innerHTML = rnd; 
+        cnt = 0; document.getElementById("cnt").innerHTML = cnt;
 
-        x = Math.floor(Math.random() * 2 + 1);
-
-        if (x == 1) correctColor = t1.style.background;
-        else correctColor = t2.style.background;
-        /* console.log(x);
-        console.log(correctColor); */
-
+        correctColor = t[Math.floor(Math.random() * 6)].style.background;
         document.getElementById("header-clue").innerHTML = correctColor;
       }
 
-      t1.addEventListener("click", function () {
-        if (t1.style.background == correctColor) {
-          t2.style.background = correctColor;
-          document.getElementById("header").style.background = correctColor;
-        } else {
-          t1.style.background = "black";
+      function onClick(z){
+        tot++; cnt++; document.getElementById("cnt").innerHTML = cnt;
+        if(t[z].style.background == correctColor) {
+          avg = tot*1.0/rnd;
+          newGame();
         }
-      });
+        else { t[z].style.background = "white"; }
+      }
 
-      t2.addEventListener("click", function () {
-        if (t2.style.background == correctColor) {
-          t1.style.background = correctColor;
-          document.getElementById("header").style.background = correctColor;
-        } else {
-          t2.style.background = "black";
-        }
-      });
+      for(let l = 0; l < 6; l++) { t[l].addEventListener("click", function () { onClick(l) }); }
+
+      function reStart(){
+        cnt = 0; rnd = 0; tot = 0; avg = 0.0;
+        newGame();
+      }
     </script>
   </body>
 </html>
